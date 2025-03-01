@@ -28,6 +28,8 @@ def get_number(from_base, number_range):
                         raise Exception()
                     elif number in (".", "-", "-.", ".-"): #raises error if the number is purely just those in the list
                         raise Exception()
+                    elif ("-" in number) and ("-" != number[0]): #raises error if negative symbol is not in index 0
+                        raise Exception()
                 elif (number[index] not in number_range) or (number_range.find(number[index]) >= from_base): #raises error if there is a character that exceeds the base
                     raise Exception()
             else:
@@ -135,36 +137,40 @@ while True:
     else:
         break
 
-number_range = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-number = get_number(from_base, number_range)
+def main():
+    number_range = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    number = get_number(from_base, number_range)
 
-if "." in number:
-    fractional_places = get_fractional_places()
-    point_index = number.find(".")
-    number_int = number[0:point_index]
-    number_float = number[point_index:]
-    
-    if from_base == 10:
-        int_final_result = int_from_base10(number_int, number_range, to_base)
-        float_final_result = float_from_base10(number_float, number_range, to_base, fractional_places)
-    elif to_base == 10:
-        int_final_result = int_to_base10(number_int, number_range, from_base)
-        float_final_result = float_to_base10(number_float[1:], number_range, from_base, fractional_places)
+    if "." in number:
+        fractional_places = get_fractional_places()
+        point_index = number.find(".")
+        number_int = number[0:point_index]
+        number_float = number[point_index:]
+        
+        if from_base == 10:
+            int_final_result = int_from_base10(number_int, number_range, to_base)
+            float_final_result = float_from_base10(number_float, number_range, to_base, fractional_places)
+        elif to_base == 10:
+            int_final_result = int_to_base10(number_int, number_range, from_base)
+            float_final_result = float_to_base10(number_float[1:], number_range, from_base, fractional_places)
+        else:
+            int_initial_result = int_to_base10(number_int, number_range, from_base)
+            int_final_result = int_from_base10(int_initial_result, number_range, to_base)
+
+            float_initial_result = float_to_base10(number_float[1:], number_range, from_base, 9999)
+            float_final_result = float_from_base10(float_initial_result, number_range, to_base, fractional_places)
+
+        final_result = int_final_result + float_final_result
     else:
-        int_initial_result = int_to_base10(number_int, number_range, from_base)
-        int_final_result = int_from_base10(int_initial_result, number_range, to_base)
+        if from_base == 10:
+            final_result = int_from_base10(number, number_range, to_base)
+        elif to_base == 10:
+            final_result = int_to_base10(number, number_range, from_base)
+        else:
+            initial_result = int_to_base10(number, number_range, from_base)
+            final_result = int_from_base10(initial_result, number_range, to_base)
 
-        float_initial_result = float_to_base10(number_float[1:], number_range, from_base, 9999)
-        float_final_result = float_from_base10(float_initial_result, number_range, to_base, fractional_places)
+    print(f"\n{number} in Base{from_base} is {final_result} in Base{to_base}.")
 
-    final_result = int_final_result + float_final_result
-else:
-    if from_base == 10:
-        final_result = int_from_base10(number, number_range, to_base)
-    elif to_base == 10:
-        final_result = int_to_base10(number, number_range, from_base)
-    else:
-        initial_result = int_to_base10(number, number_range, from_base)
-        final_result = int_from_base10(initial_result, number_range, to_base)
-
-print(f"\n{number} in Base{from_base} is {final_result} in Base{to_base}.")
+if __name__ == "__main__":
+    main()
